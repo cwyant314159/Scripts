@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# A helper script for enabling/disabling and running the desktop background
+# slideshow. 
+#
+# To enable the slideshow, pass any argument that is not a number 0 to the
+# script. Passing the number 0 disables the slideshow. If no arguments are
+# passed and the slideshow is enabled, the script calls rand_bg and exits.
+
+# We are going to use the presense of a file in the cache to determine if the
+# slideshow should run. This is the name of that file.
+EN_FILE="$XDG_CACHE_HOME"/bg_slideshow.en
+
+# If no argument is passed do the slide show action.
+[[ $# -eq 0 ]] && {
+    [ -f "$EN_FILE" ] && {
+        rand_bg
+    }
+    
+    exit 0
+}
+
+# Delete the enable file if the user passed a number 0 to the script.
+[[ $1 -eq 0 ]] && {
+    echo "Background slideshow disabled."
+    rm -f "$EN_FILE"
+    exit 0
+}
+
+# The user passed something that wasn't the number 0, so we are turning on the
+# slideshow.
+echo "Background slideshow enabled."
+touch "$EN_FILE"

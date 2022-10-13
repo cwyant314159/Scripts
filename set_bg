@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# A simple script that encapsulates setting the desktop background. Ideally
+# this script should be able to determine the desktop environment and use the
+# appropriate commands to set the desktop background. 
+
+[ -f "$1" ] || {
+    echo "Cannot find wallpaper $1"
+    exit 1
+}
+
+# Because cron jobs have a slimmed down environment we have to do this nonsense
+# to setup DBUS_SESSION_BUS_ADDRESS and DBUS_SESSION_BUS_PID.
+[ -z $DBUS_SESSION_BUS_ADDRESS ] && {
+    display=0
+    machine=$(cat /var/lib/dbus/machine-id)
+    session=~/.dbus/session-bus/${machine}-${display}
+    source "$session"
+    export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID
+}
+
+# Gnome sucks and needs the full path; hence, the call to realpath.
+ABS_BG=$(realpath "$1")
+gsettings set org.gnome.desktop.background picture-uri file://"$ABS_BG"
+
+# Store the filename in the cache for recording purposes.
+echo $(basename "$ABS_BG") > "${XDG_CACHE_HOME}"/curr_wallpaper.cache
