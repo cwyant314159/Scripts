@@ -2,7 +2,12 @@
 #
 # Use dmenu to select the wallpaper for the desktop background.
 
-# TODO use dmenu to select a background image from the wallpapers folder.
-BG_DIR="$
+BG_DIR="$XDG_DATA_HOME/wallpapers"
+ALL_BG="$(find "$BG_DIR" -type f -name "*.jpg" | tr " " "\n" | sort)"
+OPTION=$(echo "$ALL_BG" | dmenu -l 10 -fn "Source Code Pro")
 
+# TODO strip the dirname and maybe the extension for the dmenu selection. But
+# put it back when doing set_bg (maybe use index?????)
+
+set_bg "$OPTION"
 echo "The $(basename $0) script is under construction"
