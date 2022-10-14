@@ -8,6 +8,16 @@ OPTION=$(echo "$ALL_BG" | dmenu -l 10 -fn "Source Code Pro")
 
 # TODO strip the dirname and maybe the extension for the dmenu selection. But
 # put it back when doing set_bg (maybe use index?????)
+#
+# OOOORRRRRR
+#
+# We can do 2 find operations. First find gets basename'ed and piped to dmenu.
+# We take the result from dmenu and do another find but look specifically for
+# the selected BG. Take that result and send it to set_bg. We could also do a
+# word count on the second find and throw an error if there are more than one
+# results from wc
+#
+# We also need to add the error checking for dmenu
 
 set_bg "$OPTION"
 echo "The $(basename $0) script is under construction"
