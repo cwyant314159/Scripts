@@ -2,6 +2,6 @@
 #
 # Set the desktop background to a random wallpaper.
 
-BG_DIR="${HOME}/.local/share/wallpapers"
-RAND_BG=$(find "$BG_DIR" | shuf -n 1)
+BG_DIR="$XDG_DATA_HOME/wallpapers"
+RAND_BG=$(find "$BG_DIR" -type f -name "*.jpg" | shuf -n 1)
 set_bg "$RAND_BG"

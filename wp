@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Use dmenu to select the wallpaper for the desktop background.
+
+# TODO use dmenu to select a background image from the wallpapers folder.
+BG_DIR="$
+
+echo "The $(basename $0) script is under construction"
