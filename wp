@@ -2,22 +2,36 @@
 #
 # Use dmenu to select the wallpaper for the desktop background.
 
+# Get a list of all of our wallpapers separated by a new line.
+#
 BG_DIR="$XDG_DATA_HOME/wallpapers"
 ALL_BG="$(find "$BG_DIR" -type f -name "*.jpg" | tr " " "\n" | sort)"
-OPTION=$(echo "$ALL_BG" | dmenu -l 10 -fn "Source Code Pro")
 
-# TODO strip the dirname and maybe the extension for the dmenu selection. But
-# put it back when doing set_bg (maybe use index?????)
+# Strip the directories off the filenames and give that to dmenu. The -ix
+# parameter is added to dmenu so it will spit out the index of the choice
+# instead of the choice text.
 #
-# OOOORRRRRR
-#
-# We can do 2 find operations. First find gets basename'ed and piped to dmenu.
-# We take the result from dmenu and do another find but look specifically for
-# the selected BG. Take that result and send it to set_bg. We could also do a
-# word count on the second find and throw an error if there are more than one
-# results from wc
-#
-# We also need to add the error checking for dmenu
+BG_BASES=$(echo "$ALL_BG" | sed 's/.*\/\([a-zA-Z0-9_]*\.[a-zA-Z]*$\)/\1/g')
+BG_IDX=$(echo "$BG_BASES" | dmenu -l 10 -fn "Source Code Pro" -ix)
 
-set_bg "$OPTION"
-echo "The $(basename $0) script is under construction"
+# If dmenu's exit code is non-zero just exit out of the script. shellcheck 
+# warning SC2181 is suppressed since the exit status of dmenu drives this
+# script's logic.
+#
+#shellcheck disable=SC2181
+if [ $? -ne 0 ] 
+then
+    exit 0
+fi
+
+# Use the index and the cut command to extract the selected background from the
+# list of backgrounds that includes the full path. The 1 to the index is added
+# since the cut command is 1-based. The $ALL_BG variable is new line separated.
+# It must be converted into space separated for the cut command to work.
+#
+BG_IDX=$((BG_IDX+1))
+BG=$(echo "$ALL_BG" | tr "\n" " " | cut -d' ' -f "$BG_IDX")
+
+# Pass the selected background to the set_bg script.
+#
+set_bg "$BG"
