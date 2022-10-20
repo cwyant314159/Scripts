@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# The is a launcher script for the STM32CubeMX code generator. The main
+# purpose of this script is to jump to the STM32CubeMX application
+# directory since it is a poorly written Java application, and it cannot
+# just execute from anywhere.
+#
+
+# Ensure the environment variable for the application is set.
+#
+[ -z "$STM32CUBEMX_ROOT" ] && {
+    echo "STM32CUBEMX_ROOT environment variable does not exist"
+    exit 1
+}
+
+# Use pushd to jump to the STM32CubeMX application directory. Caller scripts
+# might not expect the cwd to be the application directory.
+#
+pushd $STM32CUBEMX_ROOT
+
+# Run the STM32CubeMX utility with all the command line arguments
+#
+./STM32CubeMX $@
+
+# Save the CubeMX exit code for this script's exit code.
+#
+EXIT_CODE=$?
+
+# Use popd to get back to original cwd.
+#
+popd
+
+# Exit with the CubeMX exit code.
+#
+exit $EXIT_CODE
